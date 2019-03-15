@@ -1,7 +1,7 @@
 import math
 from functools import reduce
 from typing import Callable
-from .utility_graph_node import UtilityGraphNode
+from ..utility_graph_node import UtilityGraphNode
 
 class ReducerNode(UtilityGraphNode):
     """Node representing a possible action available to the agent"""
