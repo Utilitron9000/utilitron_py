@@ -1,7 +1,9 @@
 from .utility_graph_node import UtilityGraphNode
 
+
 class GameStatNode(UtilityGraphNode):
-    """Node representing a possible action available to the agent"""
+    """Node representing a gameplay statistic
+    such as an agent's health"""
     def __init__(self, name: str):
         UtilityGraphNode.__init__(self)
         self.name = name

@@ -3,8 +3,11 @@ from functools import reduce
 from typing import Callable
 from .utility_graph_node import UtilityGraphNode
 
+
 class ReducerNode(UtilityGraphNode):
-    """Node representing a possible action available to the agent"""
+    """Node representing a mathematical operation
+    to be performed on each of the inputs
+    in order to reduce them to a single output value"""
     def __init__(self, operation: Callable):
         UtilityGraphNode.__init__(self)
         self.max_inputs = math.inf

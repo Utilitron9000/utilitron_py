@@ -2,6 +2,7 @@ import unittest
 from .score_node import ScoreNode
 from .utility_graph_node import UtilityGraphNode
 
+
 class TestScoreNode(unittest.TestCase):
     def setUp(self):
         self.nodeA = ScoreNode("name")

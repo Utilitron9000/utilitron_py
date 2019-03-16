@@ -1,6 +1,6 @@
 import unittest
 from .game_stat_node import GameStatNode
-from .utility_graph_node import UtilityGraphNode
+
 
 class TestGameStatNode(unittest.TestCase):
     def setUp(self):
