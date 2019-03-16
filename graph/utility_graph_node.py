@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+
 class UtilityGraphNode:
     """The base class for all utility graph nodes"""
     def __init__(self):
@@ -21,8 +22,10 @@ class UtilityGraphNode:
 
     def reset(self):
         self.output_val = None
+        for i in self.connected_inputs:
+            i.reset()
+
 
 class NodeConnectionError(Exception):
     """Exception thrown when an invalid connection is attempted"""
     pass
-
