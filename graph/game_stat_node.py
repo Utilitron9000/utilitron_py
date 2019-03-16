@@ -10,7 +10,7 @@ class GameStatNode(UtilityGraphNode):
         self.max_inputs = 0
 
     def set_value(self, value):
-        self.output_val = value
+        self.output = value
 
     def reset(self):
         pass

@@ -7,5 +7,5 @@ class AverageNode(ReducerNode):
 
     def get_output(self):
         sum = ReducerNode.get_output(self)
-        self.output_val = sum/len(self.connected_inputs)
-        return self.output_val
+        self.output = sum/len(self.connected_inputs)
+        return self.output

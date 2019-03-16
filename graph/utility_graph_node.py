@@ -6,22 +6,22 @@ class UtilityGraphNode:
     def __init__(self):
         self.max_inputs = 1
         self.connected_inputs = []
-        self.id = uuid4()
-        self.output_val = None
+        self.id = str(uuid4())
+        self.output = None
 
     def get_output(self):
         """Get the output value of this node"""
-        return self.output_val
+        return self.output
 
-    def connect_input(self, node: 'UtilityGraphNode'):
-        """Connect a node as an input to this node"""
+    def connect_input(self, node):
+        """Connect another UtilityGraphNode as an input to this node"""
         if len(self.connected_inputs) + 1 <= self.max_inputs:
             self.connected_inputs.append(node)
         else:
             raise NodeConnectionError()
 
     def reset(self):
-        self.output_val = None
+        self.output = None
         for i in self.connected_inputs:
             i.reset()
 

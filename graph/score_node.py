@@ -7,6 +7,7 @@ class ScoreNode(UtilityGraphNode):
     def __init__(self, name: str):
         UtilityGraphNode.__init__(self)
         self.name = name
+        self.id = name
         self.max_inputs = 1
 
     def get_output(self):

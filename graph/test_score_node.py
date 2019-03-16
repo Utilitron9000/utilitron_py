@@ -7,7 +7,7 @@ class TestScoreNode(unittest.TestCase):
     def setUp(self):
         self.nodeA = ScoreNode("name")
         self.nodeB = UtilityGraphNode()
-        self.nodeB.output_val = 5
+        self.nodeB.output = 5
 
     def test_get_output(self):
         self.assertEqual(self.nodeA.get_output(), None)
