@@ -1,6 +1,6 @@
 import unittest
 from .reducer_node import ReducerNode
-from .utility_graph_node import UtilityGraphNode
+from ..utility_graph_node import UtilityGraphNode
 
 
 class TestReducerNode(unittest.TestCase):
