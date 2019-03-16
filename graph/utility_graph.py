@@ -38,21 +38,21 @@ class UtilityGraph:
             action.reset()
 
     def _max_selection(self):
-        return max(self.actions.items(), key=lambda kv: kv[1].get_output())[1]
+        return max(self.actions.items(), key=lambda kv: kv[1].output)[1]
 
     def _weighted_random_selection(self) -> Tuple[str, float]:
         """Performs a weighted random selection on the 'top_subset_size' actions with
         the highest utility values."""
         top_actions = self._weight_actions_by_utility(self._get_top_actions())
 
-        return top_actions[random.randint(0, len(top_actions) - 1)][1]
+        return top_actions[self.rand_gen.randint(0, len(top_actions) - 1)][1]
 
     def _weight_actions_by_utility(self, actions: List[ActionKV]) \
             -> List[ActionKV]:
         """Given a list of actions with normalized utility values (0-1)
         return a list where an action with utility value n appears
         100n times in the list"""
-        extended_by_weight = [[kv] * int(kv[1].get_output() * 100)
+        extended_by_weight = [[kv] * int(kv[1].output * 100)
                               for kv in actions]
         return [kv for sublist in extended_by_weight for kv in sublist]
 
@@ -61,10 +61,18 @@ class UtilityGraph:
         utility values"""
         sorted_actions = sorted([(k, v) for k, v in self.actions.items()],
                                 reverse=True,
-                                key=lambda kv: kv[1].get_output())
+                                key=lambda kv: kv[1].output)
         return sorted_actions[:self.top_subset_size]
 
 
 class SelectionMethod(Enum):
     MAX = 1
     WEIGHTED_RANDOM = 2
+
+
+class NodeNotFoundError(Exception):
+    pass
+
+
+class NodeTypeError(Exception):
+    pass

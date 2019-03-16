@@ -1,7 +1,7 @@
 import unittest
 from .utility_graph import UtilityGraph, SelectionMethod
 from .action_node import ActionNode
-from .game_stat_node import GameStatNode
+from .stat_node import StatNode
 
 
 class TestUtilityGraph(unittest.TestCase):
@@ -11,15 +11,15 @@ class TestUtilityGraph(unittest.TestCase):
         self.graph.selection_method = SelectionMethod.MAX
 
         self.actionA = ActionNode('eat')
-        self.hunger = GameStatNode('hunger')
+        self.hunger = StatNode('hunger')
         self.actionA.connect_input(self.hunger)
 
         self.actionB = ActionNode('cry')
-        self.sadness = GameStatNode('sadness')
+        self.sadness = StatNode('sadness')
         self.actionB.connect_input(self.sadness)
 
         self.actionC = ActionNode('run')
-        self.energy = GameStatNode('energy')
+        self.energy = StatNode('energy')
         self.actionC.connect_input(self.energy)
 
         self.actionD = ActionNode('jump')

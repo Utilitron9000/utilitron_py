@@ -7,11 +7,12 @@ class UtilityGraphNode:
         self.max_inputs = 1
         self.connected_inputs = []
         self.id = str(uuid4())
-        self.output = None
+        self.__output = None
 
-    def get_output(self):
+    @property
+    def output(self):
         """Get the output value of this node"""
-        return self.output
+        return self.__output
 
     def connect_input(self, node):
         """Connect another UtilityGraphNode as an input to this node"""
@@ -21,7 +22,7 @@ class UtilityGraphNode:
             raise NodeConnectionError()
 
     def reset(self):
-        self.output = None
+        self.__output = None
         for i in self.connected_inputs:
             i.reset()
 

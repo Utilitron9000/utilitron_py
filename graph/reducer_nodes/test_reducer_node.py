@@ -1,6 +1,6 @@
 import unittest
 from .reducer_node import ReducerNode
-from ..utility_graph_node import UtilityGraphNode
+from ..utility_graph_node import UtilityGraphNode, NodeConnectionError
 
 
 class TestReducerNode(unittest.TestCase):
@@ -9,18 +9,18 @@ class TestReducerNode(unittest.TestCase):
         self.nodeB = UtilityGraphNode()
         self.nodeC = UtilityGraphNode()
 
-    def test_get_output(self):
-        with self.assertRaises(ValueError):
-            self.nodeA.get_output()
+    def test_output(self):
+        with self.assertRaises(NodeConnectionError):
+            self.nodeA.output
 
-        self.nodeB.output = 5
+        self.nodeB._UtilityGraphNode__output = 5
 
         self.nodeA.connect_input(self.nodeB)
-        self.assertEqual(self.nodeA.get_output(), 5)
+        self.assertEqual(self.nodeA.output, 5)
         self.nodeA.reset()
 
-        self.nodeB.output = 5
-        self.nodeC.output = 10
+        self.nodeB._UtilityGraphNode__output = 5
+        self.nodeC._UtilityGraphNode__output = 10
 
         self.nodeA.connect_input(self.nodeC)
-        self.assertEqual(self.nodeA.get_output(), 15)
+        self.assertEqual(self.nodeA.output, 15)

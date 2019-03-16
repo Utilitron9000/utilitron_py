@@ -10,8 +10,9 @@ class ScoreNode(UtilityGraphNode):
         self.id = name
         self.max_inputs = 1
 
-    def get_output(self):
+    @UtilityGraphNode.output.getter
+    def output(self):
         if self.connected_inputs:
-            return self.connected_inputs[0].get_output()
+            return self.connected_inputs[0].output
         else:
             return None

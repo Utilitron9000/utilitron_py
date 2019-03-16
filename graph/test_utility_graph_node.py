@@ -9,9 +9,10 @@ class TestUtilityGraphNode(unittest.TestCase):
         self.nodeC = UtilityGraphNode()
 
     def test_get_output(self):
-        self.assertEqual(self.nodeA.get_output(), None)
+        self.assertEqual(self.nodeA.output, None)
 
     def test_connect_input(self):
         self.nodeA.connect_input(self.nodeB)
+
         with self.assertRaises(NodeConnectionError):
             self.nodeA.connect_input(self.nodeC)
