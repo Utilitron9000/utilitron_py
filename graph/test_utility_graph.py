@@ -16,59 +16,107 @@ class TestUtilityGraph(unittest.TestCase):
         self.graph.top_subset_size = 2
         self.graph.selection_method = SelectionMethod.MAX
 
-        self.actionA = ActionNode('eat')
+        self.eat_action = TargetableActionNode('eat')
+
         self.hunger = StatNode('hunger')
-        self.actionA.connect_input(self.hunger)
 
-        self.actionB = ActionNode('cry')
+        self.food_distance = StatNode('food_distance')
+        self.fd_inv = InverseNode()
+        self.fd_inv.connect_input(self.food_distance)
+
+        self.food_tastiness = StatNode('food_tastiness')
+
+        self.eat_avg = AverageNode()
+        self.eat_avg.connect_input(self.hunger)
+        self.eat_avg.connect_input(self.fd_inv)
+        self.eat_avg.connect_input(self.food_tastiness)
+        self.eat_action.connect_input(self.eat_avg)
+
+        self.cry_action = ActionNode('cry')
         self.sadness = StatNode('sadness')
-        self.actionB.connect_input(self.sadness)
+        self.cry_action.connect_input(self.sadness)
 
-        self.actionC = ActionNode('run')
+        self.run_action = ActionNode('run')
         self.energy = StatNode('energy')
-        self.actionC.connect_input(self.energy)
+        self.run_action.connect_input(self.energy)
 
-        self.actionD = ActionNode('jump')
-        self.actionD.connect_input(self.energy)
+        self.graph.actions = {a.id: a for a in [self.eat_action,
+                                                self.cry_action,
+                                                self.run_action]}
 
-        self.graph.actions = {a.id: a for a in [self.actionA,
-                                                self.actionB,
-                                                self.actionC,
-                                                self.actionD]}
+        self.graph.nodes = {n.id: n for n in [self.food_tastiness,
+                                              self.food_distance]}
 
-    def test_max_selection(self):
         self.hunger.set_value(0.5)
         self.sadness.set_value(1.0)
         self.energy.set_value(0.3)
 
+    def test_update_targets(self):
+        with self.assertRaises(NodeNotFoundError):
+            self.graph.update_targets('nonexistent_action', {})
+
+        with self.assertRaises(NodeTypeError):
+            self.graph.update_targets('cry', {})
+
+        self.sadness.set_value(0.5)
+
+        targets = [
+            {
+                'name': 'pickle',
+                'food_distance': 0.2,
+                'food_tastiness': 0.05,
+            },
+            {
+                'name': 'cake',
+                'food_distance': 0.5,
+                'food_tastiness': 1.0
+            },
+            {
+                'name': 'apple',
+                'food_distance': 0.3,
+                'food_tastiness': 0.7
+            },
+        ]
+
+        target_stats = {'food_distance': [], 'food_tastiness': []}
+        for t in targets:
+            for k, v in t.items():
+                if k in target_stats:
+                    target_stats[k].append(v)
+
+        self.graph.update_targets('eat', target_stats)
+
+        action = self.graph.get_next_action()
+        self.assertEqual(action.name, 'eat')
+        self.assertEqual(action.num_targets, 3)
+        self.assertEqual(action.target_index, 1)
+
+    def test_max_selection(self):
         action = self.graph.get_next_action()
         self.assertEqual(action.name, 'cry')
 
         self.sadness.set_value(0.2)
         action = self.graph.get_next_action()
-        self.assertEqual(action.name, 'eat')
+        self.assertEqual(action.name, 'run')
 
     def test_get_top_actions(self):
-        self.hunger.set_value(0.5)
-        self.sadness.set_value(1.0)
-        self.energy.set_value(0.3)
-
-        top_actions = self.graph._get_top_actions()
+        top_actions = get_top_x(self.graph.actions.items(),
+                                self.graph.top_subset_size,
+                                self.graph.utility_key)
         self.assertEqual(len(top_actions), 2)
+
         for a in top_actions:
-            self.assertTrue(a[1].name in ['eat', 'cry'])
-            self.assertFalse(a[1].name in ['run', 'jump'])
+            self.assertTrue(a[1].name in ['cry', 'run'])
+            self.assertFalse(a[1].name in ['eat'])
 
     def test_weight_actions(self):
-        self.hunger.set_value(0.5)
-        self.sadness.set_value(1.0)
-        self.energy.set_value(0.3)
-
-        top_actions = self.graph._get_top_actions()
-        weighted = self.graph._weight_actions_by_utility(top_actions)
+        top_actions = get_top_x(self.graph.actions.items(),
+                                self.graph.top_subset_size,
+                                self.graph.utility_key)
+        weighted = get_weighted(top_actions, self.graph.utility_key)
 
         self.assertEqual(len([kv for kv in weighted
                               if kv[1].name == 'cry']), 100)
 
         self.assertEqual(len([kv for kv in weighted
-                              if kv[1].name == 'eat']), 50)
+                              if kv[1].name == 'run']), 30)

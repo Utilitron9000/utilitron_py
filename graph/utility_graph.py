@@ -1,19 +1,34 @@
-from typing import List, Tuple
-from uuid import UUID
-from .action_node import ActionNode
-from enum import Enum
-import random
+from typing import Dict, Tuple, Callable
+from graph.utility_graph_node import UtilityGraphNode
+from graph.action_node import ActionNode
+from graph.targetable_action_node import TargetableActionNode, TargetStats
+from graph.selection import select_weighted_random, SelectionMethod
+from graph.exceptions import NodeNotFoundError, NodeTypeError
 
-ActionKV = Tuple[UUID, ActionNode]
+ActionKV = Tuple[str, ActionNode]
 
 
 class UtilityGraph:
     def __init__(self, seed):
-        self.nodes = {}
-        self.actions = {}
-        self.selection_method = SelectionMethod.MAX
-        self.top_subset_size = 3
-        random.seed(seed)
+        self.nodes: Dict[str, UtilityGraphNode] = {}
+        self.actions: Dict[str, ActionNode] = {}
+        self.selection_method: SelectionMethod = SelectionMethod.MAX
+        self.top_subset_size: int = 3
+        self.utility_key: Callable = lambda kv: kv[1].output
+
+    def update_targets(self, action_name: str, targets: TargetStats):
+        """Finds a targetable action node and updates it with the
+        target stats related to that action"""
+        if action_name not in self.actions:
+            raise NodeNotFoundError('Cannot find action in graph')
+
+        action_node = self.actions[action_name]
+        if not isinstance(action_node, TargetableActionNode):
+            raise NodeTypeError('Cannot update targets for a node \
+            that is not a TargetableActionNode')
+
+        action_node.verify_target_stats(targets, self.nodes)
+        action_node.targets = targets
 
     def get_next_action(self) -> ActionNode:
         """Get the next action the agent should take based
@@ -38,30 +53,12 @@ class UtilityGraph:
             action.reset()
 
     def _max_selection(self):
-        return max(self.actions.items(), key=lambda kv: kv[1].output)[1]
+        """Selects the action with the highest utility value"""
+        return max(self.actions.items(), key=self.utility_key)[1]
 
     def _weighted_random_selection(self) -> Tuple[str, float]:
         """Performs a weighted random selection on the 'top_subset_size' actions with
         the highest utility values."""
-        top_actions = self._weight_actions_by_utility(self._get_top_actions())
-
-        return top_actions[self.rand_gen.randint(0, len(top_actions) - 1)][1]
-
-    def _weight_actions_by_utility(self, actions: List[ActionKV]) \
-            -> List[ActionKV]:
-        """Given a list of actions with normalized utility values (0-1)
-        return a list where an action with utility value n appears
-        100n times in the list"""
-        extended_by_weight = [[kv] * int(kv[1].output * 100)
-                              for kv in actions]
-        return [kv for sublist in extended_by_weight for kv in sublist]
-
-    def _get_top_actions(self) -> List[Tuple[ActionKV]]:
-        """Get the 'top_subset_size' actions with the highest
-        utility values"""
-        sorted_actions = sorted([(k, v) for k, v in self.actions.items()],
-                                reverse=True,
-                                key=lambda kv: kv[1].output)
-        return sorted_actions[:self.top_subset_size]
-
-
+        return select_weighted_random(self.actions.items(),
+                                      self.top_subset_size,
+                                      self.utility_key)[1]
