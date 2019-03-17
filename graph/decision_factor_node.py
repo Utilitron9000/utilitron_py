@@ -1,4 +1,4 @@
-from .score_node import ScoreNode
+from graph.score_node import ScoreNode
 
 
 class DecisionFactorNode(ScoreNode):

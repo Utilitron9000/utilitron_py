@@ -1,7 +1,7 @@
 import math
 from functools import reduce
 from typing import Callable
-from ..utility_graph_node import UtilityGraphNode, NodeConnectionError
+from graph.utility_graph_node import UtilityGraphNode, NodeConnectionError
 
 
 class ReducerNode(UtilityGraphNode):
@@ -15,15 +15,15 @@ class ReducerNode(UtilityGraphNode):
 
     @UtilityGraphNode.output.getter
     def output(self):
-        if UtilityGraphNode.output.fget(self):
-            return UtilityGraphNode.output.fget(self)
-
         if not self.connected_inputs:
             raise NodeConnectionError("""A reducer node must have at least
             one connected input to produce an output""")
 
+        if self._output:
+            return self._output
+
         connected_input_vals = [i.output for i in self.connected_inputs]
-        self._UtilityGraphNode__output = \
+        self._output = \
             reduce(self.operation, connected_input_vals)
 
-        return self._UtilityGraphNode__output
+        return self._output

@@ -1,5 +1,6 @@
 import unittest
-from .utility_graph_node import UtilityGraphNode, NodeConnectionError
+from graph.utility_graph_node import UtilityGraphNode
+from exceptions import NodeConnectionError
 
 
 class TestUtilityGraphNode(unittest.TestCase):

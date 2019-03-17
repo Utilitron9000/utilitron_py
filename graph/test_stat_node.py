@@ -1,5 +1,5 @@
 import unittest
-from .stat_node import StatNode
+from graph.stat_node import StatNode
 
 
 class TestStatNode(unittest.TestCase):

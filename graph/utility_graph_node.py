@@ -1,4 +1,5 @@
 from uuid import uuid4
+from graph.exceptions import NodeConnectionError
 
 
 class UtilityGraphNode:
@@ -25,8 +26,3 @@ class UtilityGraphNode:
         self.__output = None
         for i in self.connected_inputs:
             i.reset()
-
-
-class NodeConnectionError(Exception):
-    """Exception thrown when an invalid connection is attempted"""
-    pass

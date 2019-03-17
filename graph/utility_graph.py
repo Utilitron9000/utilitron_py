@@ -65,14 +65,3 @@ class UtilityGraph:
         return sorted_actions[:self.top_subset_size]
 
 
-class SelectionMethod(Enum):
-    MAX = 1
-    WEIGHTED_RANDOM = 2
-
-
-class NodeNotFoundError(Exception):
-    pass
-
-
-class NodeTypeError(Exception):
-    pass

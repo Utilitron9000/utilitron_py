@@ -1,5 +1,5 @@
-from .reducer_node import ReducerNode
-from ..utility_graph_node import UtilityGraphNode
+from graph.math_nodes.reducer_node import ReducerNode
+from graph.utility_graph_node import UtilityGraphNode
 
 
 class AverageNode(ReducerNode):
@@ -10,5 +10,5 @@ class AverageNode(ReducerNode):
     @UtilityGraphNode.output.getter
     def output(self):
         sum = ReducerNode.output.fget(self)
-        self._UtilityGraphNode__output = sum/len(self.connected_inputs)
-        return self._UtilityGraphNode__output
+        self._output = sum/len(self.connected_inputs)
+        return self._output

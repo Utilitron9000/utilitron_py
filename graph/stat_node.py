@@ -1,4 +1,4 @@
-from .utility_graph_node import UtilityGraphNode
+from graph.utility_graph_node import UtilityGraphNode
 
 
 class StatNode(UtilityGraphNode):

@@ -1,7 +1,13 @@
 import unittest
-from .utility_graph import UtilityGraph, SelectionMethod
-from .action_node import ActionNode
-from .stat_node import StatNode
+from graph.utility_graph import UtilityGraph
+from graph.selection import SelectionMethod
+from graph.action_node import ActionNode
+from graph.targetable_action_node import TargetableActionNode
+from graph.stat_node import StatNode
+from graph.selection import get_top_x, get_weighted
+from graph.exceptions import NodeNotFoundError, NodeTypeError
+from graph.math_nodes.average_node import AverageNode
+from graph.math_nodes.inverse_node import InverseNode
 
 
 class TestUtilityGraph(unittest.TestCase):
