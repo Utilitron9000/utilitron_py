@@ -57,11 +57,13 @@ class TargetableActionNode(ActionNode):
     def _verify_target_stats(self, targets: TargetStats,
                              nodes: Dict[str, UtilityGraphNode]):
         stat_names = [n for n, v in targets[0].items()]
+        stat_names_set = set(stat_names)
+
         self.stat_nodes = {}
         for stat_name in stat_names:
             for t in targets:
-                if stat_name not in t:
-                    raise ValueError('Every target dict must have the same keys')
+                if stat_names_set != set([n for n, v in t.items()]):
+                    raise ValueError('Every target dict must have values for the same stats')
 
             if stat_name not in nodes and stat_name != 'key':
                 raise NodeNotFoundError("Can't find stat node with name: "
