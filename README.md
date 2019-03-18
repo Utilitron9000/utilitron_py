@@ -1,7 +1,7 @@
-# py\_utility\_ai
+# utilitron\_py
 
 A python utility AI library
 
 Run the tests:
-- `cd py_utility_ai`
+- `cd utilitron_py`
 - `python3 -m unittest discover .`
