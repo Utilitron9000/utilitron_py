@@ -25,4 +25,3 @@ class TestInverseNode(unittest.TestCase):
         self.nodeB._output = 4
         self.assertAlmostEqual(self.nodeA.output, 0)
         self.nodeA.reset()
-

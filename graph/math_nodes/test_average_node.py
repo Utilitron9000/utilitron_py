@@ -3,7 +3,7 @@ from graph.math_nodes.average_node import AverageNode
 from graph.utility_graph_node import UtilityGraphNode
 
 
-class TestReducerNode(unittest.TestCase):
+class TestAverageNode(unittest.TestCase):
     def setUp(self):
         self.nodeA = AverageNode()
         self.nodeB = UtilityGraphNode()
