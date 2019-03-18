@@ -6,12 +6,12 @@ from graph.selection import select_weighted_random, SelectionMethod
 from graph.utility_graph_node import UtilityGraphNode
 from graph.exceptions import NodeNotFoundError, NodeTypeError
 
-TargetStats = Dict[str, List[float]]
+TargetStats = List[Dict[str, float]]
 
 
 class TargetableActionNode(ActionNode):
     """Node representing a possible action available to an agent
-    that can be performed on a number of different targets"""
+    that can be performed on a number of different target_stats"""
     def __init__(self, name: str):
         ActionNode.__init__(self, name)
         self.__targets: TargetStats = {}
@@ -27,21 +27,15 @@ class TargetableActionNode(ActionNode):
 
     @targets.setter
     def targets(self, targets):
-        if not targets:
-            self.__targets = {}
-            self.num_targets = 0
-            self.target_index = -1
-
-        # Get the length of an arbitrary value of the targets dict
-        self.num_targets = len(next(iter(targets.values())))
-
         self.__targets = targets
+        if not targets:
+            self.target_index = -1
 
     @ActionNode.output.getter
     def output(self) -> float:
         """Select a target and then return the utility
         of performing this action on that target"""
-        if self.num_targets <= 0:
+        if not self.__targets:
             return -math.inf
 
         target_utilities = self._get_target_utilities()
@@ -53,40 +47,45 @@ class TargetableActionNode(ActionNode):
 
         raise ValueError('Target selection method not recognized')
 
-    def verify_target_stats(self, targets: TargetStats,
-                            nodes: Dict[str, UtilityGraphNode]):
+    def verify_targets(self, targets: TargetStats,
+                       nodes: Dict[str, UtilityGraphNode]):
+        if not targets:
+            return
+
+        self._verify_target_stats(targets, nodes)
+
+    def _verify_target_stats(self, targets: TargetStats,
+                             nodes: Dict[str, UtilityGraphNode]):
+        stat_names = [n for n, v in targets[0].items()]
         self.stat_nodes = {}
+        for stat_name in stat_names:
+            for t in targets:
+                if stat_name not in t:
+                    raise ValueError('Every target dict must have the same keys')
 
-        last_len = None
-        for stat_name, stat_vals in targets.items():
-            if last_len is not None and len(stat_vals) != last_len:
-                raise ValueError('When updating targets for an action \
-                all stats must have a value for each target')
-            last_len = len(stat_vals)
+            if stat_name not in nodes and stat_name != 'key':
+                raise NodeNotFoundError("Can't find stat node with name: "
+                                        + stat_name)
+            elif stat_name != 'key':
+                node = nodes[stat_name]
 
-            if stat_name not in nodes:
-                raise NodeNotFoundError('Node '
-                                        + stat_name + ' could not be found')
-
-            node = nodes[stat_name]
-
-            if isinstance(node, StatNode):
-                self.stat_nodes[stat_name] = node
-            else:
-                raise NodeTypeError('The stat names supplied when updating targets \
-                for a TargetActionNode must correspond to a StatNode in the \
-                same graph')
+                if isinstance(node, StatNode):
+                    self.stat_nodes[stat_name] = node
+                else:
+                    raise NodeTypeError('The stat names supplied when updating target_stats \
+                    for a TargetActionNode must correspond to a StatNode in the \
+                    same graph')
 
     def _get_target_utilities(self) -> List[float]:
         """Determine what the utility of this action
         would be for each possible target"""
         target_utilities = []
 
-        for i in range(self.num_targets):
-            # Set the stat values for target i
-            for stat_name, stat_vals in self.targets.items():
-                stat_node = self.stat_nodes[stat_name]
-                stat_node.set_value(stat_vals[i])
+        for t in self.targets:
+            for stat_name, stat_val in t.items():
+                if stat_name != 'key':
+                    stat_node = self.stat_nodes[stat_name]
+                    stat_node.set_value(stat_val)
 
             target_utilities.append(ActionNode.output.fget(self))
             self.reset()
@@ -102,7 +101,7 @@ class TargetableActionNode(ActionNode):
 
     def _weighted_random_selection(self, target_utilities: List[float]) \
             -> float:
-        """Randomly select a target from the top_subset_size targets
+        """Randomly select a target from the top_subset_size target_stats
         that result in the highest utility for this action. Weight
         the selection based on resulting utility."""
         index_util = list(zip(range(self.num_targets), target_utilities))

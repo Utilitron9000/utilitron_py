@@ -27,7 +27,7 @@ class UtilityGraph:
             raise NodeTypeError('Cannot update targets for a node \
             that is not a TargetableActionNode')
 
-        action_node.verify_target_stats(targets, self.nodes)
+        action_node.verify_targets(targets, self.nodes)
         action_node.targets = targets
 
     def get_next_action(self) -> ActionNode:
