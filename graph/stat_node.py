@@ -5,7 +5,7 @@ class StatNode(UtilityGraphNode):
     """Node representing a gameplay statistic
     such as an agent's health"""
     def __init__(self, name: str):
-        UtilityGraphNode.__init__(self)
+        super().__init__()
         self.name = name
         self.id = name
         self.max_inputs = 0

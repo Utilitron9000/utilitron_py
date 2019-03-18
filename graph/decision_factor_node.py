@@ -7,4 +7,4 @@ class DecisionFactorNode(ScoreNode):
     Decision factors help to add semantics
     to the utility graph"""
     def __init__(self, name: str):
-        ScoreNode.__init__(self, name)
+        super().__init__(name)

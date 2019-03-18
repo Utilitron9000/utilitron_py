@@ -5,7 +5,7 @@ class ScoreNode(UtilityGraphNode):
     """A named node that simply repeats
     its input value to its output"""
     def __init__(self, name: str):
-        UtilityGraphNode.__init__(self)
+        super().__init__()
         self.name = name
         self.id = name
         self.max_inputs = 1

@@ -5,7 +5,7 @@ from graph.exceptions import NodeConnectionError
 class InverseNode(UtilityGraphNode):
     """Node representing an inverse operation"""
     def __init__(self):
-        UtilityGraphNode.__init__(self)
+        super().__init__()
         self.max_inputs = 1
 
     @UtilityGraphNode.output.getter

@@ -9,7 +9,7 @@ class ReducerNode(UtilityGraphNode):
     to be performed on each of the inputs
     in order to reduce them to a single output value"""
     def __init__(self, operation: Callable):
-        UtilityGraphNode.__init__(self)
+        super().__init__()
         self.max_inputs = math.inf
         self.operation = operation
 

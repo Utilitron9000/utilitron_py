@@ -13,7 +13,7 @@ class TargetableActionNode(ActionNode):
     """Node representing a possible action available to an agent
     that can be performed on a number of different target_stats"""
     def __init__(self, name: str):
-        ActionNode.__init__(self, name)
+        super().__init__(name)
         self.__targets: TargetStats = {}
         self.stat_nodes: Dict[str, StatNode] = {}
         self.num_targets: int = 0
