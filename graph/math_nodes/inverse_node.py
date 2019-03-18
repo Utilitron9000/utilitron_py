@@ -17,6 +17,7 @@ class InverseNode(UtilityGraphNode):
         if self._output:
             return self._output
 
-        self._output = 1.0 - max(1, self.connected_inputs[0].output)
+        self._output = 1.0 - min(1, self.connected_inputs[0].output)
 
         return self._output
+
